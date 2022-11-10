@@ -76,7 +76,11 @@ object CharPart {
   )
 
   def All: Seq[CharPart] =
-    Seq(Danda, DoubleDanda, Space, Newline, Aum, Visarga, Anusvara) ++ Digits ++ Letters
+    Seq(Danda, DoubleDanda, Space, Newline, Aum) ++ Digits ++ Letters
+
+  def Index: Map[CharPart, Int] = All.zipWithIndex.toMap
+
+  val OrderOfCount: Int = All.length.toString.length
 
   @tailrec
   def isOrdered(s1: Seq[CharPart], s2: Seq[CharPart]): Boolean = {

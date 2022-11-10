@@ -22,7 +22,7 @@ case object Accusative extends Case {
 }
 
 case object Instrumental extends Case {
-  override def abbr: String = "Instr"
+  override def abbr: String = "Ins"
 }
 
 case object Dative extends Case {

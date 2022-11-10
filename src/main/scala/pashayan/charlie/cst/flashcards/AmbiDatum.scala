@@ -1,3 +1,3 @@
 package pashayan.charlie.cst.flashcards
 
-case class AmbiDatum[T](value: String, sortingValue: T)
+case class AmbiDatum(value: String, customOrder: CustomOrder)

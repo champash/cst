@@ -4,6 +4,12 @@ import pashayan.charlie.cst.commandline.appoptions.AppOptionable
 
 trait IndicParser extends AppOptionable {
 
+  def toComparableString(string: String): String =
+    read(string)
+    .map(CharPart.Index.getOrElse(_, 0))
+    .map(s"%0${CharPart.OrderOfCount}d".format(_))
+    .mkString
+
   def unknownCharacterMap: Map[Seq[Char], CharPart] = Map(
     "□" -> Unk
   ).map {

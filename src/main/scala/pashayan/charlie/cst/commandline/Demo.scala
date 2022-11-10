@@ -1,11 +1,23 @@
 package pashayan.charlie.cst.commandline
 
+import pashayan.charlie.cst.flashcards.AmbiDeck
 import pashayan.charlie.cst.grammatical._
 import pashayan.charlie.cst.graphemes._
-import pashayan.charlie.cst.nominals._
+import pashayan.charlie.cst.irregularities.Irregularities
+import pashayan.charlie.cst.nominals.{Noun, _}
+
+import scala.annotation.tailrec
 
 object Demo {
   def run(): Unit = main(Array.empty)
+
+  @tailrec
+  def dumpDeck(deck: AmbiDeck, count: Int = 0): Unit = {
+    if (count < deck.sides._1.length) {
+      println(deck.top)
+      dumpDeck(deck.slip(gotItRight = true), count + 1)
+    }
+  }
 
   def dumpNominal(word: String, decliner: Decliner, indicParser: IndicParser): Unit = {
     def process(strings: Seq[String]): String = strings.map(s => CharvardKyoto.read(s.toCharArray)).map(Iast.write(_).mkString).mkString(", ")
@@ -87,20 +99,28 @@ object Demo {
     dumpNominal("bAlA", AaStemFeminine, Iast)
     println
 
-    println("long i stem")
+    println("long i stem:")
     dumpNominal("nadI", LongIStem, Iast)
     println
 
-    println("long i root")
+    println("long i root:")
     dumpNominal("dhI", LongIRoot, Iast)
     println
 
-    println("long u stem")
+    println("long u stem:")
     dumpNominal("vadhU", LongUStem, Iast)
     println
 
-    println("long u root")
+    println("long u root:")
     dumpNominal("bhU", LongURoot, Iast)
+    println
+
+    println("CST can build an AmbiDeck:")
+    val dheeDeck = AmbiDeck(Noun("dhI", Feminine, Irregularities(Nil)).ambiData).sort
+    dumpDeck(dheeDeck)
+    println
+    println("and flipped:")
+    dumpDeck(dheeDeck.flip)
     println
   }
 

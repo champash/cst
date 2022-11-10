@@ -3,11 +3,12 @@ package pashayan.charlie.cst.flashcards
 import scala.annotation.tailrec
 import scala.util.Random
 import AmbiDeck._
+import pashayan.charlie.cst.flashcards.CustomOrder.CustomOrderOrdering
 
-case class AmbiDeck[X, Y](sides: (Seq[(AmbiDatum[X], Seq[AmbiDatum[Y]])], Seq[(AmbiDatum[Y], Seq[AmbiDatum[X]])]), orderings: (Ordering[X], Ordering[Y]), thisSideUp: Boolean) {
-  def flip: AmbiDeck[Y, X] = AmbiDeck((sides._2, sides._1), (orderings._2, orderings._1), !thisSideUp)
+case class AmbiDeck(sides: (Seq[(AmbiDatum, Seq[AmbiDatum])], Seq[(AmbiDatum, Seq[AmbiDatum])]), thisSideUp: Boolean) {
+  def flip: AmbiDeck = AmbiDeck((sides._2, sides._1), !thisSideUp)
 
-  def slip(gotItRight: Boolean): AmbiDeck[X, Y] = sides match {
+  def slip(gotItRight: Boolean): AmbiDeck = sides match {
     case (head :: tail, bottom) =>
       val breakPoint =
         if (gotItRight) tail.length
@@ -16,64 +17,54 @@ case class AmbiDeck[X, Y](sides: (Seq[(AmbiDatum[X], Seq[AmbiDatum[Y]])], Seq[(A
       AmbiDeck(
         (front ++ (head :: back),
           bottom),
-        orderings,
         thisSideUp
       )
   }
 
-  def pop: Option[(String, Seq[String])] =
+  def top: Option[(String, Seq[String])] =
     sides._1.headOption.map {
       case (ambiDatum, ambiData) =>
         (ambiDatum.value, ambiData.map(_.value))
     }
 
-    def merge(ambiDeck: AmbiDeck[X, Y]): AmbiDeck[X, Y] = {
+  def merge(ambiDeck: AmbiDeck): AmbiDeck = {
 
-      require(orderings == ambiDeck.orderings)
+    AmbiDeck((
+      buildDeckSide(sides._1 ++ ambiDeck.sides._1),
+      buildDeckSide(sides._2 ++ ambiDeck.sides._2)),
+      thisSideUp = true)
+  }
 
-      AmbiDeck((
-        buildDeckSide(sides._1 ++ ambiDeck.sides._1, orderings),
-        buildDeckSide(sides._2 ++ ambiDeck.sides._2, (orderings._2, orderings._1))),
-        orderings,
-        thisSideUp = true)
-    }
+  def shuffle: AmbiDeck = AmbiDeck(
+    (Random.shuffle(sides._1),
+      Random.shuffle(sides._2)),
+    thisSideUp
+  )
 
-    def shuffle: AmbiDeck[X, Y] = AmbiDeck(
-      (Random.shuffle(sides._1),
-        Random.shuffle(sides._2)),
-      orderings,
-      thisSideUp
-    )
-
-  def sort: AmbiDeck[X, Y] = AmbiDeck(
-    (sides._1.sortBy(_._1.sortingValue)(orderings._1),
-      sides._2.sortBy(_._1.sortingValue)(orderings._2)),
-    orderings,
+  def sort: AmbiDeck = AmbiDeck(
+    (sides._1.sortBy(_._1.customOrder)(CustomOrderOrdering),
+      sides._2.sortBy(_._1.customOrder)(CustomOrderOrdering)),
     thisSideUp
   )
 }
 
 object AmbiDeck {
-  // type DeckSide[X, Y] = Seq[(AmbiDatum[X], Seq[AmbiDatum[Y]])]
-
   @tailrec
-  def buildDeckSide[X, Y](remaining: Seq[(AmbiDatum[X], Seq[AmbiDatum[Y]])],
-                          orderings: (Ordering[X], Ordering[Y]),
-                          map: Map[AmbiDatum[X], Set[AmbiDatum[Y]]] = Map(): Map[AmbiDatum[X], Set[AmbiDatum[Y]]]
-                         ): Seq[(AmbiDatum[X], Seq[AmbiDatum[Y]])] = remaining match {
-    case Nil => map.keys.toSeq.sortBy(_.sortingValue)(orderings._1).map(key => key -> map(key).toSeq.sortBy(_.sortingValue)(orderings._2))
+  def buildDeckSide(remaining: Seq[(AmbiDatum, Seq[AmbiDatum])],
+                    map: Map[AmbiDatum, Set[AmbiDatum]] = Map(): Map[AmbiDatum, Set[AmbiDatum]]
+                   ): Seq[(AmbiDatum, Seq[AmbiDatum])] = remaining match {
+    case Nil => map.keys.toSeq.sortBy(_.customOrder)(CustomOrderOrdering).map(key => key -> map(key).toSeq.sortBy(_.customOrder)(CustomOrderOrdering))
     case (ambiDatum, ambiData) :: tail =>
-      buildDeckSide(tail, orderings, map + (ambiDatum -> (map.getOrElse(ambiDatum, Set()) ++ ambiData)))
+      buildDeckSide(tail, map + (ambiDatum -> (map.getOrElse(ambiDatum, Set()) ++ ambiData)))
   }
 
-  def apply[X, Y](ambiData: Seq[(AmbiDatum[X], AmbiDatum[Y])], orderings: (Ordering[X], Ordering[Y])): AmbiDeck[X, Y] = {
+  def apply(ambiData: Seq[(AmbiDatum, AmbiDatum)]): AmbiDeck = {
     val deckSideTop = ambiData.map {
       case (ambiDatum1, ambiDatum2) => ambiDatum1 -> Seq(ambiDatum2)
     }
     val deckSideBottom = ambiData.map {
       case (ambiDatum1, ambiDatum2) => ambiDatum2 -> Seq(ambiDatum1)
     }
-    //AmbiDeck((buildDeckSide(deckSideTop, orderings), buildDeckSide(deckSideBottom, (orderings._2, orderings._1))), orderings, thisSideUp = true)
-    ???
+    AmbiDeck((buildDeckSide(deckSideTop), buildDeckSide(deckSideBottom)), thisSideUp = true)
   }
 }
