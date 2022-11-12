@@ -4,7 +4,7 @@
 		module="cst-build"
 		revision="0.1.0-SNAPSHOT"
 		status="integration"
-		publication="20221106125213"
+		publication="20221112105755"
 		e:sbtVersion="1.0" e:scalaVersion="2.12"
 	>
 		<description>

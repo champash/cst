@@ -1,9 +1,9 @@
 package pashayan.charlie.cst.graphemes
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatest.{Matchers, WordSpec}
 
-class CharPartSpec extends AsyncWordSpec with Matchers {
+
+class CharPartSpec extends WordSpec with Matchers {
 
   "CharPart" should {
     "know when two characters are ordered" in {

@@ -1,9 +1,9 @@
 package pashayan.charlie.cst.graphemes
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatest.{Matchers, WordSpec}
 
-class ConjunctsSpec extends AsyncWordSpec with Matchers {
+
+class ConjunctsSpec extends WordSpec with Matchers {
   "Conjuncts" should {
     "have the right number of conjuncts" in {
       Conjuncts.All.length shouldBe 211

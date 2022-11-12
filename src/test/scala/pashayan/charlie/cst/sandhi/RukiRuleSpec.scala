@@ -1,9 +1,8 @@
 package pashayan.charlie.cst.sandhi
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatest.{Matchers, WordSpec}
 
-class RukiRuleSpec extends AsyncWordSpec with Matchers {
+class RukiRuleSpec extends WordSpec with Matchers {
   "RukiRule" should {
     val triggers = Seq("r", "k", "i", "I", "u", "U", "R", "RR", "IR", "IRR", "e", "ai", "o", "au")
     val nonBlockers = Seq("", "M", "H", "#")

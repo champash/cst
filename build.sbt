@@ -6,4 +6,4 @@ scalaVersion := "2.13.8"
 
 mainClass in(Compile, run) := Some("pashayan.charlie.cst.commandline.Cst")
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.13" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.8" % "test"

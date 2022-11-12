@@ -1,9 +1,8 @@
 package pashayan.charlie.cst.sandhi
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AsyncWordSpec
+import org.scalatest.{Matchers, WordSpec}
 
-class RetroflectNRuleSpec extends AsyncWordSpec with Matchers {
+class RetroflectNRuleSpec extends WordSpec with Matchers{
 
   "RetroflectNRule" should {
     val blockers = Seq(
